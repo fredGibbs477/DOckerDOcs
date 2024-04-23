@@ -1,0 +1,22 @@
+# Define the stages of the CI pipeline
+stages:
+  - build
+  - test
+
+# Define the build job
+build:
+  stage: build
+  image: docker:stable
+  services:
+    - docker:dind
+  script:
+    - docker build -t my-nginx-image .
+
+# Define the test job
+test:
+  stage: test
+  image: alpine:latest
+  script:
+    - echo "Running tests..."
+    # Add commands to run your test script against the built Docker container
+    - docker run --rm my-nginx-image curl -sSf http://localhost:8080 > /dev/null && echo "Test passed" || echo "Test failed"
